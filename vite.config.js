@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // Nama repositori GitHub kamu. Alamat situs nanti: https://<username>.github.io/<REPO_NAME>/
 // Ganti sesuai nama repositori yang kamu pilih saat Publish di GitHub Desktop.
-const REPO_NAME = 'zenith-motion-lab'
+const REPO_NAME = 'canvas-video-studio'
 
 export default defineConfig(({ command }) => ({
   // Saat build (untuk GitHub Pages) semua alamat file diawali /<REPO_NAME>/.
