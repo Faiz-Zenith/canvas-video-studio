@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap');
+@import "tailwindcss";
+
+/* Palet Zenith: biru tua untuk latar, biru muda untuk aksen */
+@theme {
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #050914;
+  --color-ink-900: #0a1230;
+  --color-ink-800: #11204f;
+  --color-ink-700: #1b2f6b;
+  --color-paper: #eaf3ff;
+  --color-mute: #8fa8d9;
+  --color-sky: #7cc8ff;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink-950);
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-sky);
+  color: var(--color-ink-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sky);
+  outline-offset: 3px;
+}
+
+/* Satu urutan masuk saat halaman dibuka */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise {
+    animation: none;
+  }
+}
