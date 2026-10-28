@@ -1,8 +1,10 @@
 import React from 'react';
 import { useI18n } from '../i18n/context';
 
-// Foto latar ada di public/fish.jpg
-const HERO_IMAGE = '/fish.jpg';
+// Foto latar ada di public/fish.jpg.
+// BASE_URL mengikuti pengaturan `base` di vite.config.js, supaya fotonya tetap muncul
+// saat situs dihosting di sub-folder (mis. GitHub Pages: /nama-repo/).
+const HERO_IMAGE = `${import.meta.env.BASE_URL}fish.jpg`;
 
 export default function Hero() {
   const { t } = useI18n();
