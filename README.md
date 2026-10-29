@@ -1,5 +1,9 @@
 # Zenith Motion Lab
 
+[![Deploy to GitHub Pages](https://github.com/Faiz-Zenith/canvas-video-studio/actions/workflows/deploy.yml/badge.svg)](https://github.com/Faiz-Zenith/canvas-video-studio/actions/workflows/deploy.yml)
+
+**🔗 Live demo: https://faiz-zenith.github.io/canvas-video-studio/**
+
 Write a little JavaScript, get stock-ready assets. Zenith Motion Lab is a browser-based tool for microstock contributors with two workflows, both driven by code:
 
 - **Video:** turn a Canvas `draw()` function into a 4K MP4 or MOV loop video.
@@ -9,11 +13,22 @@ Everything runs in your browser. Nothing is uploaded to a server.
 
 > 🇮🇩 Ringkasan dalam Bahasa Indonesia ada di bagian [paling bawah](#bahasa-indonesia).
 
+## How the page is organised
+
+One page, four sections. Use the header links (**About**, **Render Video**, **Vector**) or the language switch (EN / ID) to move around.
+
+1. **Hero** and **About**: what the tool does, with a live demo of a `draw()` function.
+2. **Render Video**: the video studio (code editor, live preview, settings, export).
+3. **Vector**: the vector art studio, with its own code and its own settings.
+
+The video code and the vector code are separate. Editing one never changes the other.
+
 ## Features
 
 ### Video
 
 - Live preview on a canvas, with a code editor (Monaco) next to it. Errors show right above the preview.
+- The preview pauses by itself when you scroll to another section or while a video is rendering, so it does not use your GPU in the background.
 - Export to **MP4** or **MOV** (H.264), from HD to 4K, at 24, 30 or 60 FPS, for 5 to 60 seconds.
 - Aspect ratios 16:9, 9:16 and 1:1. Bitrate follows the resolution.
 - Frames are drawn and encoded with **WebCodecs** inside a Web Worker, so the page stays responsive.
@@ -22,12 +37,17 @@ Everything runs in your browser. Nothing is uploaded to a server.
 
 ### Vector art
 
-- Its own code editor, separate from the video code: `function draw(ctx, width, height)`.
-- A built-in **shape kit**: stars, sparkles, sunbursts, flowers, badges, hearts, crescents, spirals, checkerboards, warped grids, waves and more, plus colour palettes.
-- Five ready-made templates (shape sheet, sparkle field, pattern tiles, retro badges, abstract blobs).
+The vector section has three tabs.
+
+- **Code:** its own editor, separate from the video code: `function draw(ctx, width, height)`.
+- **Templates:** five ready-made templates (shape sheet, sparkle field, pattern tiles, retro badges, abstract blobs) and a reference list of the built-in **shape kit**: stars, sparkles, sunbursts, flowers, badges, hearts, crescents, spirals, checkerboards, warped grids, waves and more, plus colour palettes.
+- **Export:** variation, artboard ratio, output scale, the stock readiness check and the **Download SVG** button.
+
+More details:
+
 - **Variation (seed):** `Math.random()` is seeded, so the same code and seed always give the same image, and a new seed gives a new arrangement.
 - Own Canvas-to-SVG recorder (no extra dependency). Arcs become Bézier curves, `rgba()` colours become hex plus opacity, and clipping is kept.
-- Compare the **SVG** with the **original canvas** side by side, and zoom in to check that edges stay sharp.
+- Compare the **SVG** with the **original canvas**, and zoom in to check that edges stay sharp.
 - A **stock readiness check** that flags common problems: artboard size, text, shadows, blend modes, raster images and very complex files.
 - Artboard presets sized from 15 MP upwards.
 
@@ -45,19 +65,20 @@ Everything runs in your browser. Nothing is uploaded to a server.
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/) via `@monaco-editor/react`
 - [mp4-muxer](https://github.com/Vanilagy/mp4-muxer) and the WebCodecs API
 - [lucide-react](https://lucide.dev) icons
+- GitHub Actions and GitHub Pages for hosting
 
 ## Getting started
 
 You need [Node.js](https://nodejs.org) (a current LTS release, or whatever version your installed Vite requires) and npm.
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/Faiz-Zenith/canvas-video-studio.git
+cd canvas-video-studio
 npm install
 npm run dev
 ```
 
-Then open the address Vite prints, usually `http://localhost:5173`.
+Then open the address Vite prints, usually `http://localhost:5173/`.
 
 Other scripts:
 
@@ -67,9 +88,11 @@ npm run preview   # serve the production build locally
 npm run lint      # run ESLint
 ```
 
+`npm run preview` serves the site the same way GitHub Pages does, under the repository name, so open `http://localhost:4173/canvas-video-studio/` (not `http://localhost:4173/`).
+
 ### Browser support
 
-Video export needs the **WebCodecs** `VideoEncoder`. Use a recent Chromium-based browser (Chrome, Edge) for the best results. Where WebCodecs is missing, the render button is disabled. Vector export works in any modern browser.
+Video export needs the **WebCodecs** `VideoEncoder`, which also requires a secure context (HTTPS or `localhost`). Use a recent Chromium-based browser (Chrome, Edge) for the best results. Where WebCodecs is missing, the render button is disabled. Vector export works in any modern browser.
 
 For the fastest 4K renders, use Chrome with hardware acceleration enabled. You can check `chrome://gpu` to see whether *Video Encode* is hardware accelerated.
 
@@ -133,20 +156,35 @@ SVG has no equivalent for some canvas features. `shadowBlur`, `globalCompositeOp
 ## Project structure
 
 ```
+.github/workflows/
+└── deploy.yml      Builds the site and publishes it to GitHub Pages
+public/             Static files (favicon, hero photo)
 src/
-├── components/     Hero, About, Studio (video), VectorStudio, Viewport, CodeEditor, RenderModal, ...
+├── components/     Hero, About, SiteHeader, Studio (video), VectorStudio, Viewport,
+│                   CodeEditor, CodeCanvas, RenderModal, FormControls
 ├── constants/      Video presets (video.js) and vector artboards (vector.js)
 ├── engine/         canvasRenderer, videoEncoder.worker, vectorRenderer, shapeKit
-├── i18n/           Translations (EN/ID), provider and context
+├── i18n/           Translations (EN/ID, plus vector texts), provider and context
 ├── templates/      Default, demo and hero code, vector templates
 └── utils/          SVG recorder, SVG export and checker, other helpers
+vite.config.js      Vite config, including the base path for GitHub Pages
 ```
 
 `src/utils/aiGenerator.js` is an experimental code generator that is not shown in the interface right now.
 
 ## Deployment
 
-The app is a static site. Run `npm run build` and host the `dist/` folder on any static host (for example Vercel, Netlify or Cloudflare Pages). No special server headers are needed.
+The live site is hosted on **GitHub Pages** and is built by **GitHub Actions**. Every push to the `main` branch runs `.github/workflows/deploy.yml`, which installs dependencies, runs `npm run build` and publishes the `dist/` folder. Progress and errors are shown in the repository's **Actions** tab.
+
+### Publishing your own copy
+
+1. Fork or copy the repository, then open **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. In `vite.config.js`, set `REPO_NAME` to **exactly** the name of your repository. GitHub Pages serves the site from `https://<username>.github.io/<repository>/`, so the build needs the same base path.
+3. Push to `main` and wait for the green check in the **Actions** tab.
+
+The hero photo is loaded with `import.meta.env.BASE_URL`, so it follows the base path automatically. If you host at the root of a domain instead (for example a repository named `<username>.github.io`, or a custom domain), change `base` in `vite.config.js` to `'/'`.
+
+Other static hosts such as Vercel, Netlify or Cloudflare Pages also work. No special server headers are needed.
 
 Note: the code editor is loaded from a CDN by default, so an internet connection is required to use it.
 
@@ -158,7 +196,11 @@ Note: the code editor is loaded from a CDN by default, so an internet connection
 
 ## License
 
-Not chosen yet. Add a `LICENSE` file before making the repository public. Also check that you have the right to use the hero image in `public/fish.jpg`.
+No license has been chosen yet, so by default all rights are reserved. Add a `LICENSE` file if you want others to be able to reuse the code. Also check that you have the right to use the hero image in `public/fish.jpg`.
+
+## Author
+
+Made by [@Faiz-Zenith](https://github.com/Faiz-Zenith).
 
 ---
 
@@ -171,11 +213,21 @@ Not chosen yet. Add a `LICENSE` file before making the repository public. Also c
 
 Semua diproses di browser, tidak ada yang diunggah ke server.
 
-Cara menjalankan:
+**Coba langsung:** https://faiz-zenith.github.io/canvas-video-studio/
+
+Halamannya satu halaman dengan beberapa bagian (Hero, About, Render Video, Vector). Kode video dan kode vektor terpisah, jadi mengubah satu tidak mempengaruhi yang lain. Preview video berhenti sendiri saat kamu menggulir ke bagian lain atau saat video sedang dirender.
+
+Cara menjalankan di komputer:
 
 ```bash
+git clone https://github.com/Faiz-Zenith/canvas-video-studio.git
+cd canvas-video-studio
 npm install
 npm run dev
 ```
+
+Untuk mencoba hasil build seperti di GitHub Pages, jalankan `npm run build` lalu `npm run preview`, dan buka `http://localhost:4173/canvas-video-studio/`.
+
+Situs ini dihosting di GitHub Pages dan dibangun otomatis oleh GitHub Actions setiap ada push ke branch `main`. Kalau kamu menyalin proyek ini, ubah `REPO_NAME` di `vite.config.js` agar sama persis dengan nama repositorimu, dan atur **Settings → Pages → Source** ke **GitHub Actions**.
 
 Untuk render video, pakai Chrome atau Edge terbaru karena butuh WebCodecs. Pengecek kesiapan stok hanya panduan, jadi baca selalu persyaratan terbaru dari situs stok tujuanmu. Teks dan stroke biasanya harus di-outline, dan aplikasi ini belum melakukannya otomatis.
